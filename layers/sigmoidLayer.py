@@ -1,15 +1,13 @@
-import numpy as np
+import math
 from layers.baseLayer import baseLayer
 
 
-# for hidden layers
-class reluLayer(baseLayer):
+class outputLayer(baseLayer):
     def __init__(self, learning_rate, in_features, out_features):
         super().__init__(learning_rate, in_features, out_features)
 
     def forward(self, X):
-        self.X_bar = X
-        return np.maximum(0, X @ self.weights + self.bias)
+        return 1/(1 + math.exp(X @ self.weights + self.bias))
 
     def backward(self, dY):
         pass
