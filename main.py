@@ -3,7 +3,7 @@ from sklearn.datasets import fetch_olivetti_faces
 import numpy as np
 
 from gallary import plot_gallery
-from costFunction import MSE
+from meanSquaredError import MSE
 from layers.linearLayer import linearLayer
 from layers.reluLayer import reluLayer
 from layers.sigmoidLayer import outputLayer
@@ -24,34 +24,48 @@ def main():
     for i in range(0, n_samples, batch_size):
         batches.append(faces_centered[i : i + batch_size])
 
-    learning_rate = 0.01
+    # learning_rate = 0.01
     n_epochs = 1
 
     # encoder-decoder architecture
-    e1 = linearLayer(learning_rate, n_features, 300)
-    e2 = reluLayer(learning_rate, 300, 100)
-    e3 = linearLayer(learning_rate, 100, 50)
-    e4 = reluLayer(learning_rate, 50, 10)
+    e1 = linearLayer(n_features, 300)
+    e2 = reluLayer(300, 100)
+    e3 = linearLayer(100, 50)
+    e4 = reluLayer(50, 10)
 
-    d1 = linearLayer(learning_rate, 10, 50)
-    d2 = reluLayer(learning_rate, 50, 100)
-    d3 = linearLayer(learning_rate, 100, 300)
-    d4 = outputLayer(learning_rate, 300, n_features)
-
-    for batch in batches:
+    d1 = linearLayer(10, 50)
+    d2 = reluLayer(50, 100)
+    d3 = linearLayer(100, 300)
+    d4 = outputLayer(300, n_features)
+    
+    mse = MSE()
+    
+    for i, batch in enumerate(batches):
         for epoch in range(n_epochs):
             # forward pass
             out = e1.forward(batch)
             out = e2.forward(out)
             out = e3.forward(out)
             out = e4.forward(out)
+            
             out = d1.forward(out)
             out = d2.forward(out)
             out = d3.forward(out)
             out = d4.forward(out)
-            print("Output shape: ", out.shape)
-            loss = MSE(batch, out)
-            print("Loss: ", loss)
+            
+            loss = mse.forward(out, batch)
+            gradient_dY = mse.backward()
+            
+            dy = d4.backward(gradient_dY)
+            
+            # dy = d3.backward(dy)
+            # dy = d2.backward(dy)
+            # dy = d1.backward(dy)
+            
+            # dy = e4.backward(dy)
+            # dy = e3.backward(dy)
+            # dy = e2.backward(dy)
+            # dy = e1.backward(dy)
 
     print(np.array(batches).shape)
 

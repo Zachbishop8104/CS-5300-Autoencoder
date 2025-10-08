@@ -5,12 +5,14 @@ from layers.baseLayer import baseLayer
 class linearLayer(baseLayer):
     # in features is number of inputs
     # out features is number of outputs
-    def __init__(self, learning_rate, in_features, out_features):
-        super().__init__(learning_rate, in_features, out_features)
+    def __init__(self, in_features, out_features):
+        super().__init__(in_features, out_features)
 
-    def forward(self, batch):
-        self.X_bar = batch  # features going into layer
-        return np.dot(batch, self.weights) + self.bias
+    
+    def forward(self, X):
+        self.X_bar = X  # features going into layer
+        self.y_hat = np.dot(X, self.weights) + self.bias
+        return self.y_hat
 
     def backward(self, dY):
         # dY is the gradient of the loss with respect to the output of this layer
