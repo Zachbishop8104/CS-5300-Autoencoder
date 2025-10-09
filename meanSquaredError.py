@@ -1,3 +1,5 @@
+import numpy as np
+
 class MSE:
     def __init__(self):
         self.diff = None
@@ -7,8 +9,8 @@ class MSE:
         # pred, target: (B, D)
         self.diff = pred - target
         B, D = pred.shape
-        self.scale = 1.0 / (B * D)
-        return (self.diff ** 2).sum() * self.scale
+        self.scale = 1.0 / B
+        return np.sum(self.diff * self.diff) * self.scale / D
 
     def backward(self):
         # dL/dpred

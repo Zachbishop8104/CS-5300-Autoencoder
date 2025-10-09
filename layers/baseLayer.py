@@ -14,6 +14,7 @@ class baseLayer:
             )
         else:
             self.weights = np.zeros((input_size, output_size))
+            
         self.bias = np.zeros((1, output_size))
 
         # gradients

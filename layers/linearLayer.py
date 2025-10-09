@@ -5,8 +5,8 @@ from layers.baseLayer import baseLayer
 class linearLayer(baseLayer):
     # in features is number of inputs
     # out features is number of outputs
-    def __init__(self, in_features, out_features):
-        super().__init__(in_features, out_features)
+    def __init__(self, in_features, out_features, weight_initialize_type="he"):
+        super().__init__(in_features, out_features, weight_initialize_type)
 
     def forward(self, X):
         self.X_bar = X  # features going into layer

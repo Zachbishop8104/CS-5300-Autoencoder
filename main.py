@@ -7,50 +7,79 @@ from meanSquaredError import MSE
 from layers.linearLayer import linearLayer
 from layers.reluLayer import reluLayer
 from layers.sigmoidLayer import sigmoidLayer
+from layers.identityLayer import identityLayer
 
 
 def main():
     n_row, n_col = 3, 4
-    n_components = n_row * n_col
-    image_shape = (64, 64)
-
     rng = RandomState(0)
+
     faces, _ = fetch_olivetti_faces(return_X_y=True, shuffle=True, random_state=rng)
     n_samples, n_features = faces.shape
 
-    batch_size = 40
-    batches = [faces[i : i + batch_size] for i in range(0, n_samples, batch_size)]
+    # Train on the whole set
+    train = faces
 
-    learning_rate = 0.05
-    n_epochs = 10
+    # keeps in a nice range
+    # could be removed possibly
+    mu = train.mean(axis=0, keepdims=True)
+    sigma = train.std(axis=0, keepdims=True) + 1e-6
+    train_n = (train - mu) / sigma
+
+    batch_size = 40
+    learning_rate = 0.001
+    n_epochs = 50
 
     # encoder-decoder
-    e1 = linearLayer(n_features, 200)
+    e1 = linearLayer(n_features, 512)
     e2 = reluLayer()
-    e3 = linearLayer(200, 50)
+    e3 = linearLayer(512, 128)
     e4 = reluLayer()
 
-    d1 = linearLayer(50, 200)
+    d1 = linearLayer(128, 512)
     d2 = reluLayer()
-    d3 = linearLayer(200, n_features)
-    d4 = sigmoidLayer() 
+    d3 = linearLayer(512, n_features, "xavier")
+    d4 = sigmoidLayer()
+    # d4 = identityLayer()
 
     mse = MSE()
 
-    for i, batch in enumerate(batches):
-        for epoch in range(n_epochs):
-            # forward
-            out = e1.forward(batch)
-            out = e2.forward(out)
-            out = e3.forward(out)
-            out = e4.forward(out)
-            out = d1.forward(out)
-            out = d2.forward(out)
-            out = d3.forward(out)
-            out = d4.forward(out)
+    # small positive bias for linear layers
+    for layer in (e1, e3, d1, d3):
+        layer.bias += 0.01
 
+    def forward_pass(X):
+        z = e1.forward(X)
+        z = e2.forward(z)
+        z = e3.forward(z)
+        z = e4.forward(z)
+        z = d1.forward(z)
+        z = d2.forward(z)
+        z = d3.forward(z)
+        z = d4.forward(z)
+        return z
+
+    last_batch = None
+    last_recon = None
+
+    for epoch in range(n_epochs):
+        # shuffle each epoch
+        perm = rng.permutation(len(train_n))
+        train_shuf = train_n[perm]
+
+        epoch_losses = []
+
+        # iterate mini-batches
+        for start in range(0, len(train_shuf), batch_size):
+            batch = train_shuf[start : start + batch_size]
+
+            # forward
+            out = forward_pass(batch)
+
+            # loss + grad
             loss = mse.forward(out, batch)
             grad = mse.backward()
+            epoch_losses.append(loss)
 
             # backward
             grad = d4.backward(grad)
@@ -62,20 +91,35 @@ def main():
             grad = e2.backward(grad)
             _ = e1.backward(grad)
 
-            # update params
-            for layer in [e1, e3, d1, d3]:
+            # SGD update
+            for layer in (e1, e3, d1, d3):
                 layer.weights -= learning_rate * layer.dW
                 layer.bias -= learning_rate * layer.db
 
-        print(f"Batch {i}, epoch {epoch}, loss {loss:.4f}")
-        plot_gallery(
-            f"Reconstructed faces (batch {i}, epoch {epoch})",
-            out[:n_components],
-            n_col=n_col,
-            n_row=n_row,
+            # if this is the final batch of the epoch, save it
+            last_batch = batch
+            last_recon = out
+
+        print(
+            f"Epoch {epoch+1}/{n_epochs} | mean train MSE: {np.mean(epoch_losses):.4f}"
         )
 
-    print("Dataset consists of %d faces" % n_samples)
+    # Show some of the freshest reconstructions
+    k = n_row * n_col
+    if last_recon.shape[0] > k:
+        last_recon_to_show = last_recon[:k]
+    else:
+        last_recon_to_show = last_recon
+
+    plot_gallery(
+        "Reconstructed faces (freshest, final batch)",
+        last_recon_to_show,
+        n_col=n_col,
+        n_row=n_row,
+    )
+    print(
+        f"Displayed {last_recon_to_show.shape[0]} freshest reconstructions out of the final batch."
+    )
 
 
 if __name__ == "__main__":
