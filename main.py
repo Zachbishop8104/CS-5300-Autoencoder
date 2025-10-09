@@ -6,74 +6,76 @@ from gallary import plot_gallery
 from meanSquaredError import MSE
 from layers.linearLayer import linearLayer
 from layers.reluLayer import reluLayer
-from layers.sigmoidLayer import outputLayer
+from layers.sigmoidLayer import sigmoidLayer
 
 
 def main():
+    n_row, n_col = 3, 4
+    n_components = n_row * n_col
+    image_shape = (64, 64)
+
     rng = RandomState(0)
     faces, _ = fetch_olivetti_faces(return_X_y=True, shuffle=True, random_state=rng)
     n_samples, n_features = faces.shape
-    
-    # global centering
-    faces_centered = faces - faces.mean(axis=0)
-    # local centering
-    faces_centered -= faces_centered.mean(axis=1).reshape(n_samples, -1)
 
     batch_size = 40
-    batches = []
-    for i in range(0, n_samples, batch_size):
-        batches.append(faces_centered[i : i + batch_size])
+    batches = [faces[i : i + batch_size] for i in range(0, n_samples, batch_size)]
 
-    # learning_rate = 0.01
-    n_epochs = 1
+    learning_rate = 0.05
+    n_epochs = 10
 
-    # encoder-decoder architecture
-    e1 = linearLayer(n_features, 300)
-    e2 = reluLayer(300, 100)
-    e3 = linearLayer(100, 50)
-    e4 = reluLayer(50, 10)
+    # encoder-decoder
+    e1 = linearLayer(n_features, 200)
+    e2 = reluLayer()
+    e3 = linearLayer(200, 50)
+    e4 = reluLayer()
 
-    d1 = linearLayer(10, 50)
-    d2 = reluLayer(50, 100)
-    d3 = linearLayer(100, 300)
-    d4 = outputLayer(300, n_features)
-    
+    d1 = linearLayer(50, 200)
+    d2 = reluLayer()
+    d3 = linearLayer(200, n_features)
+    d4 = sigmoidLayer() 
+
     mse = MSE()
-    
+
     for i, batch in enumerate(batches):
         for epoch in range(n_epochs):
-            # forward pass
+            # forward
             out = e1.forward(batch)
             out = e2.forward(out)
             out = e3.forward(out)
             out = e4.forward(out)
-            
             out = d1.forward(out)
             out = d2.forward(out)
             out = d3.forward(out)
             out = d4.forward(out)
-            
+
             loss = mse.forward(out, batch)
-            gradient_dY = mse.backward()
-            
-            dy = d4.backward(gradient_dY)
-            
-            # dy = d3.backward(dy)
-            # dy = d2.backward(dy)
-            # dy = d1.backward(dy)
-            
-            # dy = e4.backward(dy)
-            # dy = e3.backward(dy)
-            # dy = e2.backward(dy)
-            # dy = e1.backward(dy)
+            grad = mse.backward()
 
-    print(np.array(batches).shape)
+            # backward
+            grad = d4.backward(grad)
+            grad = d3.backward(grad)
+            grad = d2.backward(grad)
+            grad = d1.backward(grad)
+            grad = e4.backward(grad)
+            grad = e3.backward(grad)
+            grad = e2.backward(grad)
+            _ = e1.backward(grad)
 
-    n_row, n_col = 3, 4  # for plotting
-    n_components = n_row * n_col  # for plotting
-    image_shape = (64, 64)
+            # update params
+            for layer in [e1, e3, d1, d3]:
+                layer.weights -= learning_rate * layer.dW
+                layer.bias -= learning_rate * layer.db
+
+        print(f"Batch {i}, epoch {epoch}, loss {loss:.4f}")
+        plot_gallery(
+            f"Reconstructed faces (batch {i}, epoch {epoch})",
+            out[:n_components],
+            n_col=n_col,
+            n_row=n_row,
+        )
+
     print("Dataset consists of %d faces" % n_samples)
-    # plot_gallery("Faces from dataset", faces_centered[:n_components], n_col=n_col, n_row=n_row)
 
 
 if __name__ == "__main__":

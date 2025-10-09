@@ -1,15 +1,13 @@
 import numpy as np
-from layers.baseLayer import baseLayer
 
-
-class outputLayer(baseLayer):
-    def __init__(self, in_features, out_features):
-        super().__init__(in_features, out_features)
+class sigmoidLayer():
+    def __init__(self):
+        pass
 
     def forward(self, X):
         self.X_bar = X
-        self.y_hat = 1 / (1 + np.exp(-(X @ self.weights + self.bias)))
+        self.y_hat = 1 / (1 + np.exp(-X))
         return self.y_hat
 
     def backward(self, dY):
-        pass
+        return dY * (self.y_hat * (1 - self.y_hat))

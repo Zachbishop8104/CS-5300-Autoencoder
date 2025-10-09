@@ -8,14 +8,13 @@ class linearLayer(baseLayer):
     def __init__(self, in_features, out_features):
         super().__init__(in_features, out_features)
 
-    
     def forward(self, X):
         self.X_bar = X  # features going into layer
         self.y_hat = np.dot(X, self.weights) + self.bias
         return self.y_hat
 
     def backward(self, dY):
-        # dY is the gradient of the loss with respect to the output of this layer
+        # dY is from the previous layer
         # compute gradients
         self.dW = np.dot(self.X_bar.T, dY)
         self.db = np.sum(dY, axis=0, keepdims=True)
