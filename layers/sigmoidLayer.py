@@ -6,7 +6,7 @@ class sigmoidLayer():
 
     def forward(self, X):
         self.X_bar = X
-        Z = np.clip(X, -50, 50)  # stability / flooding warning
+        Z = np.clip(X, -50, 50)  # stability / flooding warning --might not be needed
         self.y_hat = 1.0 / (1.0 + np.exp(-Z))
         return self.y_hat
 

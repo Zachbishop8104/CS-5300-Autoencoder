@@ -7,8 +7,8 @@ class reluLayer():
 
     def forward(self, X):
         self.X_bar = X
-        self.y_bar = np.maximum(0, X)
-        return self.y_bar
+        self.y_hat = np.maximum(0, X)
+        return self.y_hat
 
     def backward(self, dY):
         dZ = dY * (self.X_bar > 0).astype(float)

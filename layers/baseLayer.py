@@ -1,19 +1,15 @@
 import numpy as np
 
-
+#can be removed and just put in the linear layer class
 class baseLayer:
     def __init__(self, input_size, output_size, weight_initialize_type="he"):
         # todo initialize weights with some random protocol
         if weight_initialize_type == "he":
-            self.weights = np.random.randn(input_size, output_size) * np.sqrt(
-                2.0 / input_size
-            )
+            self.weights = np.random.randn(input_size, output_size) * np.sqrt(2.0 / input_size)
         elif weight_initialize_type == "xavier":
-            self.weights = np.random.randn(input_size, output_size) * np.sqrt(
-                1.0 / input_size
-            )
+            self.weights = np.random.randn(input_size, output_size) * np.sqrt(2.0 / (input_size + output_size))
         else:
-            self.weights = np.zeros((input_size, output_size))
+            self.weights = np.random.randn(input_size, output_size) * 0.01
             
         self.bias = np.zeros((1, output_size))
 
