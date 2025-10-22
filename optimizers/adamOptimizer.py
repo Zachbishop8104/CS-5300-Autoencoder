@@ -1,9 +1,18 @@
 import numpy as np
 
-#Just dropped this in, don't really understand right now but will figure it out later since this made the output almost perfect
+
+# Just dropped this in, don't really understand right now but will figure it out later since this made the output almost perfect
 class Adam:
-    def __init__(self, layers, lr=1e-3, beta1=0.9, beta2=0.999, eps=1e-8,
-                 weight_decay=0.0, adamw=True):
+    def __init__(
+        self,
+        layers,
+        lr=5e-3,
+        beta1=0.9,
+        beta2=0.999,
+        eps=1e-8,
+        weight_decay=0.0,
+        adamw=True
+    ):
         """
         layers: iterable of layers with .weights, .bias, .dW, .db
         adamw:  True = decoupled weight decay (AdamW), False = L2 inside grads
@@ -20,13 +29,13 @@ class Adam:
         # Per-parameter moment buffers
         self.mW = {id(L): np.zeros_like(L.weights) for L in self.layers}
         self.vW = {id(L): np.zeros_like(L.weights) for L in self.layers}
-        self.mb = {id(L): np.zeros_like(L.bias)    for L in self.layers}
-        self.vb = {id(L): np.zeros_like(L.bias)    for L in self.layers}
+        self.mb = {id(L): np.zeros_like(L.bias) for L in self.layers}
+        self.vb = {id(L): np.zeros_like(L.bias) for L in self.layers}
 
     def step(self):
         self.t += 1
-        b1t = self.b1 ** self.t
-        b2t = self.b2 ** self.t
+        b1t = self.b1**self.t
+        b2t = self.b2**self.t
 
         for L in self.layers:
             key = id(L)
@@ -49,7 +58,7 @@ class Adam:
 
             # Parameter updates
             L.weights -= self.lr * (mW_hat / (np.sqrt(vW_hat) + self.eps))
-            L.bias    -= self.lr * (mb_hat / (np.sqrt(vb_hat) + self.eps))
+            L.bias -= self.lr * (mb_hat / (np.sqrt(vb_hat) + self.eps))
 
             # Decoupled weight decay (AdamW)
             if self.adamw and self.wd > 0.0:

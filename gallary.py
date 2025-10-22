@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 
 def plot_gallery(title, images, n_col=3, n_row=2, cmap=plt.cm.gray):
+    n_col = int(n_col)
+    n_row = int(n_row)
+
     image_shape = (64, 64)
 
     fig, axs = plt.subplots(
@@ -12,10 +15,9 @@ def plot_gallery(title, images, n_col=3, n_row=2, cmap=plt.cm.gray):
     fig.set_edgecolor("black")
     fig.suptitle(title, size=16)
 
-    # display range fixed for Olivetti faces
     for ax, vec in zip(axs.flat, images):
-        ax.imshow(vec.reshape(image_shape), cmap=cmap, interpolation="nearest",
-                  vmin=0.0, vmax=1.0)
+        ax.imshow(vec.reshape(image_shape), cmap=cmap,
+                  interpolation="nearest", vmin=0.0, vmax=1.0)
         ax.axis("off")
 
     plt.show()

@@ -1,12 +1,25 @@
 import numpy as np
-from layers.baseLayer import baseLayer
 
 
-class linearLayer(baseLayer):
+class linearLayer():
     # in features is number of inputs
     # out features is number of outputs
     def __init__(self, in_features, out_features, weight_initialize_type="he"):
-        super().__init__(in_features, out_features, weight_initialize_type)
+        if weight_initialize_type == "he":
+            self.weights = np.random.randn(in_features, out_features) * np.sqrt(2.0 / in_features)
+        elif weight_initialize_type == "xavier":
+            self.weights = np.random.randn(in_features, out_features) * np.sqrt(2.0 / (in_features + out_features))
+        else:
+            self.weights = np.random.randn(in_features, out_features) * 0.01
+
+        self.bias = np.zeros((1, out_features))
+
+        # gradients
+        self.dW = np.zeros_like(self.weights)
+        self.db = np.zeros_like(self.bias)
+
+        self.X_bar = None
+        self.y_hat = None
 
     def forward(self, X):
         self.X_bar = X  # features going into layer
