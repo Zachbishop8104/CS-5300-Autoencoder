@@ -1,4 +1,5 @@
 
+#simple Stochastic Gradient Descent optimizer
 class SGD:
     def __init__(self, layers, lr=0.01):
         self.layers = layers
