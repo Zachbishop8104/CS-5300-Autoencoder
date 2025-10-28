@@ -62,7 +62,7 @@ def initialize_model(
             L.bias += 0.01
 
     # collect trainable (linear) layers
-    trainable_layers = tuple([L for L in layers])
+    trainable_layers = tuple([L for L in layers if hasattr(L, "weights")])
 
     # optimizer setup
     opt = None
