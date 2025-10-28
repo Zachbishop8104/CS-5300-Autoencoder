@@ -1,0 +1,4 @@
+[
+  {"encoder_sizes":[256,64], "epochs":10, "batch_size":50, "optimizer":{"type":"sgd","lr":0.01}},
+  {"encoder_sizes":[512,128], "epochs":10, "batch_size":35, "optimizer":{"type":"adam","lr":0.001}}
+]
