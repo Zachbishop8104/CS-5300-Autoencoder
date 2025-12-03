@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def plot_gallery(title, images, n_col=3, n_row=2, cmap=plt.cm.gray):
+def plot_gallery(title, images, n_col=3, n_row=2, cmap=plt.cm.gray, save_path=None):
     n_col = int(n_col)
     n_row = int(n_row)
 
@@ -16,8 +16,22 @@ def plot_gallery(title, images, n_col=3, n_row=2, cmap=plt.cm.gray):
     fig.suptitle(title, size=16)
 
     for ax, vec in zip(axs.flat, images):
-        ax.imshow(vec.reshape(image_shape), cmap=cmap,
-                  interpolation="nearest", vmin=0.0, vmax=1.0)
+        ax.imshow(
+            vec.reshape(image_shape),
+            cmap=cmap,
+            interpolation="nearest",
+            vmin=0.0,
+            vmax=1.0,
+        )
         ax.axis("off")
 
-    plt.show()
+    if save_path:
+        fig.savefig(save_path, dpi=150)
+        plt.close(fig)
+    else:
+        # Avoid calling plt.show() when using a non-interactive backend like Agg
+        backend = str(plt.get_backend()).lower()
+        if "agg" in backend:
+            plt.close(fig)
+        else:
+            plt.show()

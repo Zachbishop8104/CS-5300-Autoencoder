@@ -1,0 +1,16 @@
+[
+  {
+    "encoder_sizes": [512, 256],
+    "epochs": 30,
+    "batch_size": 64,
+    "optimizer": { "type": "adam", "lr": 0.001, "weight_decay": 0.0001 },
+    "activation": { "type": "leaky_relu", "alpha": 0.001 },
+    "plot": true,
+    "verbose": true,
+    "cv_type": "holdout",
+    "val_size": 20,
+    "seed": 0
+  }
+]
+
+

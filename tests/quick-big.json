@@ -1,0 +1,98 @@
+[
+  {
+    "encoder_sizes": [1024, 256],
+    "epochs": 20,
+    "batch_size": 128,
+    "optimizer": { "type": "adam", "lr": 0.001 },
+    "activation": { "type": "relu" },
+    "plot": true,
+    "verbose": true,
+    "cv_type": "kfold",
+    "n_splits": 3,
+    "seed": 0
+  },
+  {
+    "encoder_sizes": [1024, 256],
+    "epochs": 20,
+    "batch_size": 128,
+    "optimizer": { "type": "adam", "lr": 0.001 },
+    "activation": { "type": "leaky_relu", "alpha": 0.001 },
+    "plot": true,
+    "verbose": true,
+    "cv_type": "kfold",
+    "n_splits": 3,
+    "seed": 0
+  },
+  {
+    "encoder_sizes": [1024, 256],
+    "epochs": 20,
+    "batch_size": 128,
+    "optimizer": { "type": "sgd", "lr": 0.001 },
+    "activation": { "type": "relu", "alpha": 0.001 },
+    "plot": true,
+    "verbose": true,
+    "cv_type": "kfold",
+    "n_splits": 3,
+    "seed": 0
+  },
+  {
+    "encoder_sizes": [1024, 256],
+    "epochs": 20,
+    "batch_size": 128,
+    "optimizer": { "type": "sgd", "lr": 0.001 },
+    "activation": { "type": "leaky_relu", "alpha": 0.001 },
+    "plot": true,
+    "verbose": true,
+    "cv_type": "kfold",
+    "n_splits": 3,
+    "seed": 0
+  },
+  {
+    "encoder_sizes": [2048, 256],
+    "epochs": 20,
+    "batch_size": 128,
+    "optimizer": { "type": "adam", "lr": 0.001 },
+    "activation": { "type": "relu" },
+    "plot": true,
+    "verbose": true,
+    "cv_type": "kfold",
+    "n_splits": 3,
+    "seed": 0
+  },
+  {
+    "encoder_sizes": [2048, 256],
+    "epochs": 20,
+    "batch_size": 128,
+    "optimizer": { "type": "adam", "lr": 0.001 },
+    "activation": { "type": "leaky_relu", "alpha": 0.001 },
+    "plot": true,
+    "verbose": true,
+    "cv_type": "kfold",
+    "n_splits": 5,
+    "seed": 0
+  },
+  {
+    "encoder_sizes": [2048, 256],
+    "epochs": 10,
+    "batch_size": 128,
+    "optimizer": { "type": "sgd", "lr": 0.001 },
+    "activation": { "type": "relu", "alpha": 0.001 },
+    "plot": true,
+    "verbose": true,
+    "cv_type": "kfold",
+    "n_splits": 3,
+    "seed": 0
+  },
+  {
+    "encoder_sizes": [2048, 256],
+    "epochs": 20,
+    "batch_size": 128,
+    "optimizer": { "type": "sgd", "lr": 0.001 },
+    "activation": { "type": "leaky_relu", "alpha": 0.001 },
+    "plot": true,
+    "verbose": true,
+    "cv_type": "kfold",
+    "n_splits": 3,
+    "seed": 0
+  }
+]
