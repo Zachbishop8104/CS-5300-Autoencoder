@@ -1,0 +1,76 @@
+[
+  {
+    "encoder_sizes": [512, 128],
+    "epochs": 20,
+    "batch_size": 64,
+    "optimizer": { "type": "adam", "lr": 0.001 },
+    "activation": { "type": "relu" },
+    "plot": true,
+    "verbose": true,
+    "cv_type": "kfold",
+    "n_splits": 3,
+    "seed": 0
+  },
+  {
+    "encoder_sizes": [512, 128],
+    "epochs": 20,
+    "batch_size": 128,
+    "optimizer": { "type": "adam", "lr": 0.0005 },
+    "activation": { "type": "relu" },
+    "plot": true,
+    "verbose": true,
+    "cv_type": "kfold",
+    "n_splits": 3,
+    "seed": 0
+  },
+  {
+    "encoder_sizes": [512, 128],
+    "epochs": 20,
+    "batch_size": 256,
+    "optimizer": { "type": "adam", "lr": 0.002 },
+    "activation": { "type": "relu" },
+    "plot": true,
+    "verbose": true,
+    "cv_type": "kfold",
+    "n_splits": 3,
+    "seed": 0
+  },
+  {
+    "encoder_sizes": [512, 128],
+    "epochs": 20,
+    "batch_size": 64,
+    "optimizer": { "type": "adam", "lr": 0.001 },
+    "activation": { "type": "leaky_relu", "alpha": 0.001 },
+    "plot": true,
+    "verbose": true,
+    "cv_type": "kfold",
+    "n_splits": 3,
+    "seed": 0
+  },
+  {
+    "encoder_sizes": [512, 128],
+    "epochs": 20,
+    "batch_size": 64,
+    "optimizer": { "type": "adam", "lr": 0.001 },
+    "activation": { "type": "leaky_relu", "alpha": 0.01 },
+    "plot": true,
+    "verbose": true,
+    "cv_type": "kfold",
+    "n_splits": 3,
+    "seed": 0
+  },
+  {
+    "encoder_sizes": [512, 128],
+    "epochs": 20,
+    "batch_size": 128,
+    "optimizer": { "type": "adam", "lr": 0.0005 },
+    "activation": { "type": "leaky_relu", "alpha": 0.001 },
+    "plot": true,
+    "verbose": true,
+    "cv_type": "kfold",
+    "n_splits": 3,
+    "seed": 0
+  }
+]
+
+

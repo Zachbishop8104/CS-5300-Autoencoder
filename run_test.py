@@ -8,7 +8,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from main import train_and_evaluate
+import main as ae_main
+from gallary import plot_gallery
 
 
 def _build_optimizer_config(cfg):
@@ -29,6 +30,9 @@ def _build_activation_config(cfg):
     return out
 
 
+_GALLERY_INDEX = 0
+
+
 def _run_single(cfg):
     encoder_sizes = cfg.get("encoder_sizes", [512, 128])
     epochs = int(cfg.get("epochs", 50))
@@ -38,11 +42,12 @@ def _run_single(cfg):
     verbose = bool(cfg.get("verbose", False))
     cv_type = str(cfg.get("cv_type", "loso")).lower()
     n_splits = int(cfg.get("n_splits", 5))
+    val_size = int(cfg.get("val_size", 10))
     optimizer_config = _build_optimizer_config(cfg)
     activation_config = _build_activation_config(cfg)
 
     t0 = time.perf_counter()
-    result = train_and_evaluate(
+    result = ae_main.train_and_evaluate(
         encoder_sizes=encoder_sizes,
         epochs=epochs,
         batch_size=batch_size,
@@ -53,6 +58,7 @@ def _run_single(cfg):
         activation_config=activation_config,
         cv_type=cv_type,
         n_splits=n_splits,
+        val_size=val_size,
     )
     t1 = time.perf_counter()
     train_time_s = float(t1 - t0)
@@ -69,6 +75,35 @@ def _run_single(cfg):
         "train_time_s": train_time_s,
         **result,
     }
+
+    # Generate and save a reconstruction gallery for this network, if available
+    try:
+        imgs = getattr(ae_main, "last_gallery_imgs", None)
+        if imgs is not None:
+            global _GALLERY_INDEX
+            mse = result.get("mean_val_mse")
+            mse_str = f", mse={mse:.4f}" if mse is not None else ""
+            title = (
+                f"Reconstructions (network {_GALLERY_INDEX + 1})\n"
+                f"enc={encoder_sizes}, opt={optimizer_config.get('type')}, "
+                f"act={activation_config.get('type')}{mse_str}"
+            )
+            gallery_filename = f"gallery_network_{_GALLERY_INDEX + 1}.png"
+            # Infer grid size from the number of images (we always use 5 columns).
+            n_col = 5
+            n_row = max(1, int((len(imgs) + n_col - 1) // n_col))
+            plot_gallery(
+                title,
+                imgs,
+                n_row=n_row,
+                n_col=n_col,
+                save_path=gallery_filename,
+            )
+            _GALLERY_INDEX += 1
+    except Exception:
+        # Do not fail the run if gallery plotting fails
+        pass
+
     return result_out
 
 
